@@ -21,13 +21,14 @@ public class WordGridService {
             }
         }
 
-        private enum Direction{
-            HOR,
-            VER,
-            DIA,
-            I_HOR,
-            I_VER
-        }
+    private enum Direction{
+        HOR,
+        VER,
+        DIA,
+        I_HOR,
+        I_VER,
+        I_DIA
+    }
 
         public char[][] generateGrid(int GRID_SIZE, List<String> words){
 
@@ -41,8 +42,8 @@ public class WordGridService {
                 }
             }
 
-            Collections.shuffle(coordinates);
             for(String word : words) {
+                Collections.shuffle(coordinates);
                 for(Coordinate coordinate : coordinates){
                     int x = coordinate.x;
                     int y = coordinate.y;
@@ -61,6 +62,12 @@ public class WordGridService {
                                 }
                                 break;
 
+                            case DIA:
+                                for (char ch : word.toCharArray()) {
+                                    grid[x++][y++] = ch;
+                                }
+                                break;
+
                             case I_VER:
                                 for (char ch : word.toCharArray()) {
                                     grid[x--][y] = ch;
@@ -71,9 +78,10 @@ public class WordGridService {
                                     grid[x][y--] = ch;
                                 }
                                 break;
-                            case DIA:
+
+                            case I_DIA:
                                 for (char ch : word.toCharArray()) {
-                                    grid[x++][y++] = ch;
+                                    grid[x--][y--] = ch;
                                 }
                                 break;
                         }
@@ -125,7 +133,7 @@ public class WordGridService {
                     if (coordinate.y + word.length() > GRID_SIZE)
                         return false;
                     for (int i = 0; i < word.length(); i++) {
-                        if (grid[coordinate.x][coordinate.y+i] != '_')
+                        if (grid[coordinate.x][coordinate.y+i] != '_' && grid[coordinate.x][coordinate.y+i]!=word.charAt(i))
                             return false;
                     }
                     break;
@@ -134,7 +142,7 @@ public class WordGridService {
                     if (coordinate.x + word.length() > GRID_SIZE)
                         return false;
                     for (int i = 0; i < word.length(); i++) {
-                        if (grid[coordinate.x + i][coordinate.y] != '_')
+                        if (grid[coordinate.x + i][coordinate.y] != '_' && grid[coordinate.x + i][coordinate.y]!=word.charAt(i))
                             return false;
                     }
                     break;
@@ -143,16 +151,16 @@ public class WordGridService {
                     if (coordinate.y + word.length() > GRID_SIZE || coordinate.x + word.length() > GRID_SIZE )
                         return false;
                     for (int i = 0; i < word.length(); i++) {
-                        if (grid[coordinate.x+i][coordinate.y + i] != '_')
+                        if (grid[coordinate.x+i][coordinate.y + i] != '_' && grid[coordinate.x + i][coordinate.y+1]!=word.charAt(i))
                             return false;
                     }
                     break;
 
                 case I_VER:
-                    if (coordinate.x < word.length())
+                    if (coordinate.x < word.length() )
                         return false;
                     for (int i = 0; i < word.length(); i++) {
-                        if (grid[coordinate.x-i][coordinate.y] != '_')
+                        if (grid[coordinate.x-i][coordinate.y] != '_' && grid[coordinate.x-i][coordinate.y] != word.charAt(i))
                             return false;
                     }
                     break;
@@ -160,7 +168,15 @@ public class WordGridService {
                     if (coordinate.y < word.length())
                         return false;
                     for (int i = 0; i < word.length(); i++) {
-                        if (grid[coordinate.x][coordinate.y-i] != '_')
+                        if (grid[coordinate.x][coordinate.y-i] != '_' && grid[coordinate.x][coordinate.y-i] != word.charAt(i))
+                            return false;
+                    }
+                    break;
+                case I_DIA:
+                    if (coordinate.y < word.length() || coordinate.x < word.length())
+                        return false;
+                    for (int i = 0; i < word.length(); i++) {
+                        if (grid[coordinate.x-i][coordinate.y-i] != '_' && grid[coordinate.x-i][coordinate.y-i] !=word.charAt(i))
                             return false;
                     }
                     break;
